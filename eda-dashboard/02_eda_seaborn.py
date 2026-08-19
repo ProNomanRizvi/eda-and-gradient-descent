@@ -179,3 +179,33 @@ plt.close(fig)
 
 
 print("\nAll Seaborn visualizations saved successfully.")
+
+# ---------------------------------------------------------
+# Bonus: Outlier Detection
+# ---------------------------------------------------------
+
+fig, ax = plt.subplots(figsize=(9, 6))
+
+sns.boxplot(
+    data=df,
+    x="Churn",
+    y="MonthlyCharges",
+    ax=ax
+)
+
+ax.set_title("Monthly Charges Distribution and Outliers by Churn")
+ax.set_xlabel("Churn Status")
+ax.set_ylabel("Monthly Charges")
+
+fig.tight_layout()
+
+fig.savefig(
+    f"{OUTPUT_DIR}/q_bonus_monthlycharges_boxplot.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.close(fig)
+
+
+print("Bonus boxplot saved successfully.")
