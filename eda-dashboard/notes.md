@@ -132,3 +132,68 @@ All figures saved to `visuals/seaborn/` at 300 DPI.
   imbalance needs to be checked explicitly for every new plot type — the
   same fix from Matplotlib's Q3 didn't carry over automatically because
   Seaborn's default statistic is different from what was used there.
+
+# Plotly EDA — Customer Churn Dataset
+
+## Industry Context
+
+Plotly's core value over Matplotlib/Seaborn is interactivity — hover tooltips,
+zoom, and pan — which matters for dashboards and stakeholder-facing work where
+static screenshots aren't enough. For a portfolio project, including a Plotly
+section signals the ability to build interactive dashboards, not just static
+reports, which is an increasingly expected skill for entry-level data roles.
+
+## Core Concepts Practiced
+
+- **Interactive hover context**: `hover_data=["customerID", "Contract"]` in
+  the Q8 scatter lets a viewer inspect individual customers without adding
+  visual clutter to the chart itself — something a static plot can't offer.
+- **Rate over raw count for imbalanced groups**: Q9 and Q10 both calculate
+  churn *rate* (`groupby().apply(lambda x: (x == "Yes").mean() * 100)`)
+  instead of raw churn counts. This matters because groups being compared
+  (e.g. senior vs non-senior citizens) are very different sizes — comparing
+  raw counts would be misleading, rate comparison isn't.
+- **Reshaping wide to long format for combined comparison**: Q10 needed to
+  compare two separate binary columns (`Partner`, `Dependents`) against churn
+  in a single grouped bar chart. Solved by building two long-format
+  sub-tables (one per column, each tagged with a `Relationship` label) and
+  concatenating them, so both comparisons render side-by-side in one figure
+  instead of two separate charts.
+- **Overplotting correction**: the Q8 scatter (7032 points) initially had no
+  transparency, making dense regions an indistinguishable solid mass and
+  hiding the actual point density. Fixed with `opacity=0.5`.
+- **Dual export**: every figure is saved as both a static PNG
+  (`write_image()`, for READMEs and quick viewing) and an interactive HTML
+  file (`write_html()`, for demonstrating the actual interactivity).
+
+## Task
+
+Answer three EDA questions using Plotly Express:
+
+- **Q8 — Tenure vs Monthly Charges**: Is there a visible relationship between
+  how long a customer has stayed and what they pay, split by churn status?
+- **Q9 — Senior citizen churn rate**: Do senior citizens churn at a different
+  rate than non-seniors?
+- **Q10 — Partner/Dependents vs churn**: Does having a partner or dependents
+  affect churn rate?
+
+## Output & Findings
+
+All figures saved to `visuals/plotly/` as both PNG (300 DPI equivalent via
+`scale=2`) and interactive HTML.
+
+| File | Finding |
+|---|---|
+| `q8_tenure_vs_monthlycharges.png/.html` | Churned customers (red) are heavily concentrated in the low-tenure region; retained customers (blue) dominate the high-tenure region. No strong linear relationship between tenure and monthly charges themselves — churn risk is driven more by tenure than by charge level directly. |
+| `q9_senior_citizen_churn_rate.png/.html` | Senior citizens churn at 41.7%, nearly double the non-senior rate of 23.7% — one of the strongest single-feature churn signals in the dataset. |
+| `q10_partner_dependents_churn.png/.html` | Customers without a partner churn at 33.0% vs 19.7% for those with one. Customers without dependents churn at 31.3% vs 15.5% for those with dependents. Both relationship factors are protective against churn, with dependents showing the larger effect. |
+
+## Notes
+
+- The `TotalCharges` cleaning step is duplicated from the Matplotlib/Seaborn
+  scripts, consistent with the standalone-script pattern used throughout
+  this project.
+- Overplotting in Q8 is a good example of a visualization bug that isn't a
+  statistical error — the underlying data and aggregation were correct, but
+  the chart's readability was compromised until transparency was added. Both
+  types of issues (statistical and visual) need separate checks during review.
