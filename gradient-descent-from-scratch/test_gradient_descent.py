@@ -37,3 +37,18 @@ def test_matches_sklearn_within_tolerance():
 
     assert np.all(weight_diff < 0.001)
     assert bias_diff < 0.01
+
+
+def test_dataset_generation_is_reproducible_without_changing_global_rng():
+    state_before = np.random.get_state()
+
+    first = generate_dataset(n_samples=10, seed=42)
+    second = generate_dataset(n_samples=10, seed=42)
+
+    for first_array, second_array in zip(first[:3], second[:3]):
+        np.testing.assert_array_equal(first_array, second_array)
+    assert first[3] == second[3]
+    state_after = np.random.get_state()
+    assert state_before[0] == state_after[0]
+    np.testing.assert_array_equal(state_before[1], state_after[1])
+    assert state_before[2:] == state_after[2:]

@@ -7,11 +7,11 @@ from sklearn.linear_model import LinearRegression
 
 def generate_dataset(n_samples=200, seed=42):
     """Generate a synthetic multi-feature regression dataset."""
-    np.random.seed(seed)
-    X = np.random.rand(n_samples, 3) * 10
+    rng = np.random.RandomState(seed)
+    X = rng.rand(n_samples, 3) * 10
     true_weights = np.array([3.5, -2.0, 1.2])
     true_bias = 5.0
-    noise = np.random.normal(0, 1, n_samples)
+    noise = rng.normal(0, 1, n_samples)
     y = X @ true_weights + true_bias + noise
     return X, y, true_weights, true_bias
 
